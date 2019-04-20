@@ -1,0 +1,10 @@
+def includeme(config):
+    config.add_static_view('static', 'static', cache_max_age=3600) 
+    config.add_route('home', '/') 
+    config.add_route('getposts', '/posts')
+    config.add_route('post','/post/create')
+    config.add_route('liked','/post/liked')
+    config.add_route('notliked','/post/notliked')    
+    config.add_route('themes','/post/themes') 
+    config.add_route('getranking','/themes/ranking') 
+    config.add_route('ranking','/themes') 

@@ -1,0 +1,38 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Themes ranking </h1>
+</div>   
+<div class="box"></div>
+<div id="ranking" class="content">      
+</div> 
+  
+{% endblock content %}
+
+{%block scripts %}
+
+<script type="text/javascript"> 
+
+$('.box').jmspinner('large');  
+
+$(document).ready(function(){  
+  
+   $.ajax(
+        {
+          method: "GET", 
+          url: "themes/ranking", 
+          success: function(data){ 
+            var $el = $("#ranking");
+            $el.empty();  
+            $.each(data.ranking, function(index,value) {  
+              $el.append($("<h2></h2>").append(value.name+' - '+value.score));
+            });
+            $('.box').jmspinner(false); 
+           }
+        }); 
+});
+
+</script>
+
+{% endblock %}

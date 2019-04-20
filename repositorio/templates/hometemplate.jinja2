@@ -1,0 +1,145 @@
+{% extends "layout.jinja2" %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Home</h1>
+</div>
+
+<div class="content">  
+
+<div class="panel panel-default">
+<div class="panel-body">
+ <form method="post" action="/post/create" enctype="multipart/form-data" id="form_id">
+   <div class="row">    
+      <div class="col-md-3"> 
+        <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+      </div>
+      <div class="col-md-3">   
+        <select id="theme" name="theme_id" class="form-control">          
+        </select>        
+      </div>
+      <div class="col-md-3">  
+         <input type="file" id="file" name="file">    
+      </div>  
+      <div class="col-md-3"> 
+          <button id="submit"  type="submit" class="btn btn-primary pull-right hidden">Save</button>
+          <span class="box-themes pull-right"></span>
+      </div> 
+    </div>  
+</form>
+</div>
+</div>
+<div class="box-posts"></div>
+<div id="posts" class="row"> 
+</div> 
+
+</div>
+{% endblock content %}
+
+{%block scripts %}
+
+<script type="text/javascript"> 
+
+$('.box-themes').jmspinner('large');  
+$('.box-posts').jmspinner('large'); 
+
+$(document).ready(function(){  
+   $.ajax(
+        {
+          method: "GET", 
+          url: "posts", 
+          success: function(data){               
+            $.each(data.posts, function(index,value) {  
+              append_post(value);
+            });
+            $('.box-posts').jmspinner(false); 
+           }
+        }); 
+
+
+  $.ajax(
+        {
+          method: "GET", 
+          url: "post/themes", 
+          success: function(data){ 
+            var $el = $("#theme");
+            $el.empty();  
+            $.each(data.themes, function(index,value) {  
+              $el.append($("<option></option>").attr("value", value._id).text(value.name));
+            });
+            $('.box-themes').jmspinner(false);
+            $('#submit').removeClass("hidden");
+           }
+        }); 
+
+});
+
+$("#form_id").submit(function(event){
+
+    event.preventDefault();  
+
+    $('.box-themes').jmspinner('large'); 
+    $('#submit').addClass("hidden");
+
+    var post_url = $(this).attr("action");  
+    var request_method = $(this).attr("method");  
+    var form_data = new FormData(this);  
+    
+    $.ajax({
+      url : post_url,
+      type: request_method,
+      data : form_data,
+      contentType: false,
+      cache: false,
+      processData:false
+    }).done(function(data){  
+       append_post(data.post);
+       $('#name').val("");
+       $('#file').val("");
+       $('.box-themes').jmspinner(false);
+       $('#submit').removeClass("hidden");
+    });
+}); 
+
+function evaluation(element){
+      url = $(element).data("url");
+      theme_id = $(element).data("theme-id");
+      post_id = $(element).data("post-id");
+      $('#box-'+post_id).jmspinner('large');  
+      $.ajax(
+        {
+          method: "POST",
+          data: {'theme_id':theme_id, 'post_id':post_id },
+          url: url 
+        }).done(function(data){
+            $('#box-'+post_id).jmspinner(false);
+        });
+}
+
+function append_post(post)
+{  
+  var title = $('<div class="panel-heading"></div> ').append(post.name+ ' - '+post.theme);
+
+  var source = $('<source type="video/mp4">').attr("src",post.path);
+  var video = $('<video controls class="col-md-12" height="300px"></video>').append(source);  
+  var body = $('<div class="panel-body"></div>').append(video);  
+  
+  var up = $('<a onclick="evaluation(this);" href="javascript:void(0);" class="evaluation"><span class="glyphicon glyphicon-thumbs-up" style="font-size:20px;" aria-hidden="true"></span></a>')
+  .attr("data-url", "post/liked") .attr("data-post-id", post._id).attr("data-theme-id", post.theme_id);
+  var down = $('<a onclick="evaluation(this);" href="javascript:void(0);" class="evaluation"><span class="glyphicon glyphicon-thumbs-down" style="font-size:20px;" aria-hidden="true"></span></a>')
+  .attr("data-url", "post/notliked") .attr("data-post-id", post._id).attr("data-theme-id", post.theme_id); 
+  var updown = $('<div class="col-md-6"></div>').append(up).append(down);
+
+  var box = $('<div class="col-md-6"></div>').append($('<span class="pull-right"></span>').attr("id","box-"+post._id));
+  
+  var footer_content = $('<div class="row"></div>').append(updown).append(box);
+  var footer = $('<div class="panel-footer"></div>').append(footer_content); 
+
+  var content = $('<div class="panel panel-default"></div>').append(title).append(body).append(footer); 
+
+  $("#posts").prepend($('<div class="col-md-6"></div>').append(content));  
+
+};
+
+</script>
+{% endblock %}
