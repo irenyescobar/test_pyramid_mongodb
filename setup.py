@@ -14,6 +14,7 @@ requires = [
     'pyramid_jinja2',
     'pyramid_debugtoolbar',
     'pyramid_storage',
+    'pymongo'
     'waitress',
 ]
 
