@@ -6,7 +6,7 @@ Getting Started
 
 - Change directory into your newly created project.
 
-    cd repositorio
+    cd test_pyramid_mongodb
 
 - Create a Python virtual environment.
 
