@@ -1,5 +1,3 @@
-projeto_teste
-=============
 
 Getting Started
 ---------------
@@ -10,20 +8,20 @@ Getting Started
 
 - Create a Python virtual environment.
 
-    python3 -m venv env
+    python -m venv env
 
 - Upgrade packaging tools.
 
-    env/bin/pip install --upgrade pip setuptools
+-change directory to env/Scripts and run the commands in sequence:
 
-- Install the project in editable mode with its testing requirements.
+    pip install --upgrade pip setuptools   
 
-    env/bin/pip install -e ".[testing]"
+    pip install -e <path your project> 
 
-- Run your project's tests.
-
-    env/bin/pytest
+    python setup.py develop
 
 - Run your project.
 
-    env/bin/pserve development.ini
+    pserve development.ini
+
+- look at http://localhost:6543
