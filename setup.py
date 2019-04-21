@@ -15,6 +15,7 @@ requires = [
     'pyramid_debugtoolbar',
     'pyramid_storage',
     'pymongo',
+    'dnspython',
     'waitress',
 ]
 
